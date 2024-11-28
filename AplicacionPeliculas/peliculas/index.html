@@ -45,7 +45,7 @@ if (isset($validar))
    //echo "Numero filas".$nfilas;
    $reg = mysql_fetch_array ( $result );
 
-   //Si el usuario existe y su password es correcto -> Se configuran la sesiÛn
+   //Si el usuario existe y su password es correcto -> Se configuran la sesi√≥n
    if ($reg)
    {
 
@@ -111,7 +111,7 @@ $VALIDADO=validar_sesion($login,$tipo_usuario);
               <?php
 
               }
-              else //Si el usuario ha iniciado sesiÛn
+              else //Si el usuario ha iniciado sesi√≥n
               {
               ?>
                  <tr border="0">
@@ -130,7 +130,7 @@ $VALIDADO=validar_sesion($login,$tipo_usuario);
                    <td height="50" colspan="2" ></td>
                  </tr>
                  <tr border="0">
-                   <td width="200" colspan="2" height="30" class="formulario" ><a class="textoFormulario" href="#" onClick="document.menu.pagina.value='buscarPeliculas.php';document.menu.submit()">Busqueda de pelÌculas</a> </td>
+                   <td width="200" colspan="2" height="30" class="formulario" ><a class="textoFormulario" href="#" onClick="document.menu.pagina.value='buscarPeliculas.php';document.menu.submit()">Busqueda de pel√≠culas</a> </td>
                  </tr>
               <?php
                   //Si el usuario es administrador
@@ -138,10 +138,10 @@ $VALIDADO=validar_sesion($login,$tipo_usuario);
                    {
               ?>
                        <tr border="0">
-                          <td width="200" height="30" colspan="2" class="formulario" ><a class="textoFormulario" href="#" onClick="document.menu.pagina.value='insertarPelicula.php';document.menu.submit()">Alta de pelÌculas </a></td>
+                          <td width="200" height="30" colspan="2" class="formulario" ><a class="textoFormulario" href="#" onClick="document.menu.pagina.value='insertarPelicula.php';document.menu.submit()">Alta de pel√≠culas </a></td>
                        </tr>
                        <tr border="0">
-                           <td width="200" height="30" colspan="2" class="formulario"><a class="textoFormulario" href="#" onClick="document.menu.pagina.value='eliminarPeliculas.php';document.menu.submit()">Eliminar pelÌculas </a></td>
+                           <td width="200" height="30" colspan="2" class="formulario"><a class="textoFormulario" href="#" onClick="document.menu.pagina.value='eliminarPeliculas.php';document.menu.submit()">Eliminar pel√≠culas </a></td>
                        </tr>
 
 
@@ -153,7 +153,7 @@ $VALIDADO=validar_sesion($login,$tipo_usuario);
                  </tr>
 
                  <tr border="0">
-                     <td width="200" height="30" colspan="2" class="formulario"><a  class="textoFormulario" href="#" onClick="document.menu.pagina.value='cerrarSesion.php';document.menu.submit()">Cerrar SesiÛn </a> </td>
+                     <td width="200" height="30" colspan="2" class="formulario"><a  class="textoFormulario" href="#" onClick="document.menu.pagina.value='cerrarSesion.php';document.menu.submit()">Cerrar Sesi√≥n </a> </td>
                  </tr>
               <?php
 
@@ -167,7 +167,7 @@ $VALIDADO=validar_sesion($login,$tipo_usuario);
          <td width="750"  class="Derecha"  align="center">
             <table cellspacing="0" border="0" height="500">
                 <tr height="80">
-                    <td class="logo" align="center" >PelÌculas</td>
+                    <td class="logo" align="center" >Pel√≠culas</td>
                 </tr>
                  <tr height="500">
                      <td valign="top"> <?php include($pagina); ?> </td>
