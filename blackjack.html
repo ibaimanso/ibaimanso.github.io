@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlackJack Humilde</title>
+    <link rel="stylesheet" href="Estilos/estilos.css">
+    <link rel="stylesheet" href="Estilos/cssGeneral.css">
+    <link rel="icon" href="Imagenes/icono_web.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<header>
+    <h2>BlackJack Humilde</h2>
+    <div class="hamburger-menu" onclick="toggleMenu()">
+        &#9776; 
+    </div>
+    <nav id="navbar">
+        <ul>
+            <li class="bajar"><a href="menu.html">Inicio</a></li>
+            <li class="bajar"><a href="https://www.blackjack.org/es/reglas-del-blackjack/" target="_blank">Reglas</a></li>
+            <li class="bajar"><a href="resultados.html">Estadísticas</a></li>
+            <li class="bajar"><a href="ingresar_dinero.html">Ingresar</a></li>
+            <li class="bajar"><a href="menu.html">Atras</a></li>
+            <li class="bajar cerrarSesion"><a input="button" href="login.html" class="cerrarSesion" onclick="cerrarSesion()">Cerrar Sesión</a></li>
+            <li>
+                <a href="registro.html">
+                    <img id="user-profile-img" alt="Imagen de perfil del usuario" />
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<script>
+    function toggleMenu() {
+        const navbar = document.getElementById('navbar');
+        navbar.classList.toggle('active'); // Alterna la clase 'active' para mostrar/ocultar
+    }
+    
+    function cerrarSesion(){
+        localStorage.removeItem("currentUser");
+        localStorage.removeItem("isLoggedIn");
+        window.location.href = "login.html";
+
+    }
+</script>
+<body>
+
+
+    <h1>Bienvenido al BlackJack Humilde</h1>
+
+    <img src="Imagenes/luigi_con_cartas.png" alt="luigi_cartas" class="luigiCartas">
+
+    <div class="initial-money">
+        <p>Dinero inicial:</p>
+        <input type="text" id="initial-money" readonly>
+    </div>
+    
+    <button id="start-button">Iniciar Juego</button>
+
+    <div class="results">
+        <h2>Resultados del Juego:</h2>
+        <p id="winner"></p>
+        <p><strong>Puntaje del Usuario:</strong> <span id="user-score"></span></p>
+        <p><strong>Puntaje del Cruppier:</strong> <span id="dealer-score"></span></p>
+    </div>
+
+    <div>
+        <h2>Mano del Usuario</h2>
+        <div class="hand-container" id="user-hand"></div>
+    </div>
+
+    <div>
+        <h2>Mano del Cruppier</h2>
+        <div class="hand-container" id="dealer-hand"></div>
+    </div>
+
+    <button id="hit-button" style="display: none;">Pedir Carta</button>
+    <button id="stand-button" style="display: none;">Plantarse</button>
+
+    <script src="Scripts/blackjack.js"></script> <!-- Enlace al JavaScript -->
+   
+  
+    
+</body>
+<footer>
+    <p>BlackJack Humilde</p>
+    <p class="contenidoFooter">Contacto - Telefono - Direccion</p>
+</footer>
+</html>

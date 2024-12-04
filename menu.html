@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlackJack Humilde</title>
+    <link rel="stylesheet" href="Estilos/estilosMenu.css">
+    <link rel="stylesheet" href="Estilos/cssGeneral.css">
+    <link rel="icon" href="Imagenes/icono_web.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+    <header>
+        <h2>BlackJack Humilde</h2>
+        <div class="hamburger-menu" onclick="toggleMenu()">
+            &#9776; 
+        </div>
+        <nav id="navbar">
+            <ul>
+                <li class="bajar"><a href="blackjack.html">Jugar</a></li>
+                <li class="bajar"><a href="https://www.blackjack.org/es/reglas-del-blackjack/" target="_blank">Reglas</a></li>
+                <li class="bajar"><a href="ingresar_dinero.html">Ingresar</a></li>
+                <li class="bajar"><a href="resultados.html">Estadísticas</a></li>
+                <li class="bajar cerrarSesion"><a input="button" style="cursor: pointer" class="cerrarSesion" onclick="cerrarSesion()">Cerrar Sesión</a></li>
+                <li>
+                    <a href="registro.html">
+                        <img id="user-profile-img" alt="Imagen de perfil del usuario" />
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+</header>
+
+<body>
+    <h1>BlackJack Humilde</h1>
+    <form>
+        <input type="button" value="Nueva partida" onclick="juego()">
+        <input type="button" value="Estadísticas" onclick="estadisticas()">
+        <input type="button" value="Ajustes de usuario" onclick="ajustes()">
+    </form>
+
+    <img src="Imagenes/luigi.png" alt="luigi" class="luigi">
+    <script src="Scripts/menu.js"></script> <!-- Enlace al JavaScript -->
+</body>
+<footer>
+    <p>BlackJack Humilde</p>
+    <p class="contenidoFooter">Contacto - Telefono - Direccion</p>
+</footer>
+</html>

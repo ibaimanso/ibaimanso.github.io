@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="Estilos/estilos_ingresar_dinero.css">
+    <link rel="stylesheet" href="Estilos/cssGeneral.css">
+    <link rel="icon" href="Imagenes/icono_web.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlackJack Humilde</title>
+</head>
+<header>
+    <h2>BlackJack Humilde</h2>
+    <div class="hamburger-menu" onclick="toggleMenu()">
+        &#9776; 
+    </div>
+    <nav id="navbar">
+        <ul>
+            <li class="bajar"><a href="menu.html">Inicio</a></li>
+            <li class="bajar"><a href="https://www.blackjack.org/es/reglas-del-blackjack/" target="_blank">Reglas</a></li>
+            <li class="bajar"><a href="blackjack.html">Jugar</a></li>
+            <li class="bajar"><a href="resultados.html">Estadísticas</a></li>
+            <li class="bajar"><a href="menu.html">Atras</a></li>
+            <li class="bajar cerrarSesion"><a input="button" href="login.html" class="cerrarSesion" onclick="cerrarSesion()">Cerrar Sesión</a></li>
+            <li>
+                <a href="registro.html">
+                    <img id="user-profile-img" alt="Imagen de perfil del usuario" />
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+
+<body>
+    <form onsubmit="startGame(event)">
+        <label>Ingresa el dinero con el que quieras empezar el juego:</label>
+        <input type="number" id="starting-money" required min="20" max="10000">
+        <br>
+        <input type="submit" value="Iniciar juego">
+    </form>
+
+    
+</body>
+<footer>
+    <p>BlackJack Humilde</p>
+    <p class="contenidoFooter">Contacto - Telefono - Direccion</p>
+</footer>
+<script src="Scripts/ingresar_dinero.js"></script>
+
+</html>
