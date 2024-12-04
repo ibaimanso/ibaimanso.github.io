@@ -22,7 +22,7 @@ switch (confirmacion) {
         // Si el usuario confirma, realiza el cierre de sesión
         localStorage.removeItem("currentUser");
         localStorage.removeItem("isLoggedIn");
-        window.location.href = "login.html";
+        window.location.href = "index.html";
         break;
         
     case false:

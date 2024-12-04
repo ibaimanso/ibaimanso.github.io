@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function cerrarSesion(){
     localStorage.removeItem("currentUser");
     localStorage.removeItem("isLoggedIn");
-    window.location.href = "login.html";
+    window.location.href = "index.html";
 
 }
 

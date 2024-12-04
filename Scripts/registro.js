@@ -51,7 +51,7 @@ document.getElementById('registrationForm').addEventListener('submit', function(
                 localStorage.setItem('users', JSON.stringify(users));
                 localStorage.setItem('currentUser', JSON.stringify(newUser));
                 alert("Usuario registrado con éxito!");
-                window.location.href = "login.html";
+                window.location.href = "index.html";
             } else {
                 // Si es actualización, modificamos el usuario actual y actualizamos en users
                 currentUser.username = username;
@@ -83,7 +83,7 @@ document.getElementById('registrationForm').addEventListener('submit', function(
             localStorage.setItem('users', JSON.stringify(users));
             localStorage.setItem('currentUser', JSON.stringify(newUser));
             alert("Usuario registrado con éxito!");
-            window.location.href = "login.html";
+            window.location.href = "indexs.html";
         } else {
             currentUser.username = username;
             currentUser.password = password;
