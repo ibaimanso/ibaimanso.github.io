@@ -1,0 +1,85 @@
+body {
+    font-family: 'Poppins', serif;
+    text-align: center;
+    background-color: #1d1f21; /* Color de fondo oscuro */
+    color: #ffffff; /* Color del texto blanco */
+    padding: 50px 0; /* Espacio superior e inferior */
+    background-image: url(../Imagenes/blackjack_fondo.jpg); /* Fondo de la imagen */
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    height: 100vh;
+    margin: 0;
+    display: flex; 
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center;
+}
+h1, h2 {
+    margin-bottom: 20px; /* Espacio inferior */
+}
+
+form {
+    background: rgba(30, 30, 30, 0.8); /* Fondo semi-transparente */
+    border-radius: 8px; /* Bordes redondeados */
+    padding: 20px; /* Espaciado interno */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Sombra suave */
+    width: 90%; /* Ancho responsivo */
+    max-width: 400px; /* Ancho máximo */
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold; /* Negrita en las etiquetas */
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="file"] {
+    width: 100%;
+    height: 30px;
+    margin-top: 8px;
+    border: 1px solid #444; /* Borde gris oscuro */
+    border-radius: 4px; /* Bordes redondeados */
+    background-color: #2a2d2e; /* Fondo del input */
+    color: #ffffff; /* Color de texto en el input */
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus {
+    outline: none; /* Sin contorno */
+    border-color: #007BFF; /* Cambiar color del borde al enfocar */
+}
+
+button {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #007BFF; /* Color azul */
+    color: white; /* Color del texto blanco */
+    border: none; /* Sin borde */
+    border-radius: 4px; /* Bordes redondeados */
+    cursor: pointer; /* Cambiar cursor */
+    transition: background-color 0.3s; /* Transición suave */
+    font-size: 16px; /* Tamaño de fuente del botón */
+}
+
+button:hover {
+    background-color: #0056b3; /* Color al pasar el mouse */
+}
+
+p {
+    margin-top: 20px; /* Espacio superior */
+    font-size: 14px; /* Tamaño de fuente del párrafo */
+}
+
+a {
+    color: #00a2ff; /* Color de enlace */
+    text-decoration: none; /* Sin subrayado */
+}
+
+a:hover {
+    text-decoration: underline; /* Subrayar al pasar el mouse */
+}
