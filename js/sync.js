@@ -12,6 +12,7 @@ class SyncManager {
     this.isHost = false;
     this._statusCallback = null;
     this._reconnectTimer = null;
+    this._connTimeout = null;
     this._peerReady = false;
   }
 
@@ -58,11 +59,13 @@ class SyncManager {
   // ─── Desconectar ────────────────────────────
 
   disconnect() {
-    clearInterval(this._reconnectTimer);
-    this.connections.forEach(conn => conn.close());
+    this._clearTimers();
+    this.connections.forEach(conn => {
+      try { conn.close(); } catch { /* ignore */ }
+    });
     this.connections.clear();
     if (this.peer) {
-      this.peer.destroy();
+      try { this.peer.destroy(); } catch { /* ignore */ }
       this.peer = null;
     }
     this.roomId = null;
@@ -71,6 +74,13 @@ class SyncManager {
     store.updateSettings({ roomId: null, isHost: false });
     this._setStatus('disconnected');
     showToast('Desconectado de la sala', 'info');
+  }
+
+  _clearTimers() {
+    clearTimeout(this._reconnectTimer);
+    clearTimeout(this._connTimeout);
+    this._reconnectTimer = null;
+    this._connTimeout = null;
   }
 
   // ─── Reconectar automáticamente ─────────────
@@ -84,12 +94,23 @@ class SyncManager {
       this.isHost = true;
       this._initPeer(`familist-${settings.roomId}`).then(() => {
         this._setStatus('hosting', settings.roomId);
+      }).catch(() => {
+        // ID podría seguir registrado de sesión anterior, reintentar
+        this._reconnectTimer = setTimeout(() => {
+          if (this.roomId) {
+            this._initPeer(`familist-${settings.roomId}`).then(() => {
+              this._setStatus('hosting', settings.roomId);
+            }).catch(() => this._setStatus('error'));
+          }
+        }, 5000);
       });
     } else {
       this.roomId = settings.roomId;
       this.isHost = false;
       this._initPeer().then(() => {
         this._connectToHost(settings.roomId);
+      }).catch(() => {
+        this._scheduleReconnect(settings.roomId, 5000);
       });
     }
   }
@@ -116,24 +137,45 @@ class SyncManager {
     });
   }
 
+  // ─── ICE Servers (STUN + TURN) ──────────────
+
+  _getIceServers() {
+    return [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+      { urls: 'stun:stun2.l.google.com:19302' },
+      { urls: 'stun:stun3.l.google.com:19302' },
+      {
+        urls: 'turn:openrelay.metered.ca:80',
+        username: 'openrelayproject',
+        credential: 'openrelayproject'
+      },
+      {
+        urls: 'turn:openrelay.metered.ca:443',
+        username: 'openrelayproject',
+        credential: 'openrelayproject'
+      },
+      {
+        urls: 'turn:openrelay.metered.ca:443?transport=tcp',
+        username: 'openrelayproject',
+        credential: 'openrelayproject'
+      }
+    ];
+  }
+
   // ─── Internals ──────────────────────────────
 
   async _initPeer(id) {
     return new Promise((resolve, reject) => {
       if (this.peer) {
-        this.peer.destroy();
+        try { this.peer.destroy(); } catch { /* ignore */ }
         this.peer = null;
       }
       this._peerReady = false;
 
       const opts = {
         debug: 0,
-        config: {
-          iceServers: [
-            { urls: 'stun:stun.l.google.com:19302' },
-            { urls: 'stun:stun1.l.google.com:19302' }
-          ]
-        }
+        config: { iceServers: this._getIceServers() }
       };
 
       try {
@@ -147,7 +189,7 @@ class SyncManager {
       const timeout = setTimeout(() => {
         if (!this._peerReady) {
           this._setStatus('error');
-          reject(new Error('Timeout'));
+          reject(new Error('Timeout conectando al servidor'));
         }
       }, 15000);
 
@@ -165,13 +207,14 @@ class SyncManager {
       this.peer.on('error', (err) => {
         clearTimeout(timeout);
         if (err.type === 'unavailable-id') {
-          showToast('Esa sala ya está ocupada. Intenta con otro código.', 'error');
+          showToast('Sala ya en uso. Reintentando...', 'error');
           this._setStatus('error');
+          reject(err);
         } else if (err.type === 'peer-unavailable') {
-          showToast('No se encontró la sala. Verifica el código.', 'error');
-          this._setStatus('error');
+          // Gestionado en _connectToHost — no rechazar aquí
         } else {
           this._setStatus('error');
+          if (!this._peerReady) reject(err);
         }
       });
 
@@ -186,38 +229,102 @@ class SyncManager {
     });
   }
 
-  _connectToHost(code) {
-    if (!this.peer || !this._peerReady) return;
+  // ─── Conexión del guest al host ─────────────
 
+  _connectToHost(code) {
+    if (!this.peer || !this._peerReady) {
+      this._scheduleReconnect(code, 3000);
+      return;
+    }
+
+    this._clearTimers();
     this._setStatus('connecting');
+
+    let settled = false;
     const conn = this.peer.connect(`familist-${code}`, { reliable: true });
 
+    // Capturar 'peer-unavailable' que PeerJS emite en el peer (no en la conexión)
+    const onPeerError = (err) => {
+      if (settled) return;
+      if (err.type === 'peer-unavailable') {
+        settled = true;
+        clearTimeout(this._connTimeout);
+        this._connTimeout = null;
+        this.peer.off('error', onPeerError);
+        showToast('Sala no encontrada. Reintentando...', 'error');
+        this._setStatus('reconnecting');
+        if (this.roomId) this._scheduleReconnect(code, 5000);
+      }
+    };
+    this.peer.on('error', onPeerError);
+
+    // Timeout: si en 12s no se conecta, reintentar
+    this._connTimeout = setTimeout(() => {
+      if (!settled) {
+        settled = true;
+        this.peer.off('error', onPeerError);
+        try { conn.close(); } catch { /* ignore */ }
+        this._setStatus('reconnecting');
+        if (this.roomId) this._scheduleReconnect(code, 3000);
+      }
+    }, 12000);
+
     conn.on('open', () => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(this._connTimeout);
+      this._connTimeout = null;
+      this.peer.off('error', onPeerError);
       this._handleConnection(conn);
-      // Solicitar sincronización completa
       conn.send(JSON.stringify({ type: 'sync-request' }));
       this._setStatus('connected', code);
       showToast('Conectado a la sala', 'success');
     });
 
-    conn.on('error', () => {
-      this._setStatus('error');
-      showToast('Error al conectar', 'error');
+    conn.on('close', () => {
+      if (!settled && this.roomId) {
+        settled = true;
+        clearTimeout(this._connTimeout);
+        this._connTimeout = null;
+        this.peer.off('error', onPeerError);
+        this._scheduleReconnect(code, 3000);
+      }
     });
 
-    // Reconexión periódica
-    this._reconnectTimer = setInterval(() => {
-      if (this.connections.size === 0 && this.roomId) {
-        this._setStatus('reconnecting');
-        const retry = this.peer.connect(`familist-${this.roomId}`, { reliable: true });
-        retry.on('open', () => {
-          this._handleConnection(retry);
-          retry.send(JSON.stringify({ type: 'sync-request' }));
-          this._setStatus('connected', this.roomId);
-        });
-      }
-    }, 10000);
+    conn.on('error', () => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(this._connTimeout);
+      this._connTimeout = null;
+      this.peer.off('error', onPeerError);
+      this._setStatus('error');
+      showToast('Error al conectar. Reintentando...', 'error');
+      if (this.roomId) this._scheduleReconnect(code, 5000);
+    });
   }
+
+  // ─── Reconexión programada ──────────────────
+
+  _scheduleReconnect(code, delay) {
+    clearTimeout(this._reconnectTimer);
+    this._reconnectTimer = setTimeout(() => {
+      if (!this.roomId) return;
+      if (!this.peer || this.peer.destroyed) {
+        // El peer fue destruido, reinicializar
+        this._initPeer().then(() => {
+          this._connectToHost(code);
+        }).catch(() => {
+          this._scheduleReconnect(code, 10000);
+        });
+      } else if (this._peerReady) {
+        this._connectToHost(code);
+      } else {
+        this._scheduleReconnect(code, 5000);
+      }
+    }, delay);
+  }
+
+  // ─── Gestión de conexiones ──────────────────
 
   _handleConnection(conn) {
     const peerId = conn.peer;
@@ -235,11 +342,18 @@ class SyncManager {
     conn.on('close', () => {
       this.connections.delete(peerId);
       this._updateConnectionCount();
+      // Si el guest pierde la conexión con el host, reintentar
+      if (!this.isHost && this.roomId && this.connections.size === 0) {
+        this._scheduleReconnect(this.roomId, 3000);
+      }
     });
 
     conn.on('error', () => {
       this.connections.delete(peerId);
       this._updateConnectionCount();
+      if (!this.isHost && this.roomId && this.connections.size === 0) {
+        this._scheduleReconnect(this.roomId, 5000);
+      }
     });
   }
 

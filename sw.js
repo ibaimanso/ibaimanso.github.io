@@ -1,5 +1,5 @@
 // Service Worker - FamiList
-const CACHE_NAME = 'familist-v1';
+const CACHE_NAME = 'familist-v2';
 const ASSETS = [
   './',
   './index.html',
